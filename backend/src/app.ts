@@ -1,3 +1,5 @@
+import companyRoutes from "./routes/company.routes";
+import jobRoutes from "./routes/job.routes";
 import authRoutes from "./routes/auth.routes";
 import express from "express";
 import cors from "cors";
@@ -13,6 +15,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/jobs", jobRoutes);
+app.use("/company", companyRoutes);
 app.get("/health", async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;

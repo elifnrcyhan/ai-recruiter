@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 
-const profile = (_req: Request, res: Response) => {
+const profile = (req: Request, res: Response) => {
   res.json({
     message: "Private profile",
+    user: (req as any).user,
   });
 };
 
