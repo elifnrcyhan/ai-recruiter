@@ -36,6 +36,26 @@ model Company {
   ownerId     String   @unique
   owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
+  jobs        Job[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+model Job {
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  location       String
+  employmentType String
+
+  salaryMin      Int?
+  salaryMax      Int?
+
+  isActive       Boolean @default(true)
+
+  companyId      String
+  company         Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
