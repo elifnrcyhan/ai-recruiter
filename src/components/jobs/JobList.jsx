@@ -1,31 +1,36 @@
 import JobCard from "./JobCard";
 
-function JobList() {
+function JobList({ jobs }) {
+  if (jobs.length === 0) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center rounded-lg border border-dashed">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold">
+            No jobs found
+          </h3>
+
+          <p className="mt-2 text-sm text-muted-foreground">
+            Try changing your search or filter settings.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <JobCard
-        title="Frontend Developer"
-        location="Remote"
-        type="Full Time"
-        applicants={12}
-        status="Active"
-      />
-
-      <JobCard
-        title="Backend Developer"
-        location="Hybrid"
-        type="Full Time"
-        applicants={8}
-        status="Active"
-      />
-
-      <JobCard
-        title="UI/UX Designer"
-        location="Remote"
-        type="Contract"
-        applicants={5}
-        status="Closed"
-      />
+      {jobs.map((job) => (
+        <JobCard
+          key={job.id}
+          id={job.id}
+          title={job.title}
+          location={job.location}
+          type={job.type}
+          applicants={job.applicants}
+          matchRate={job.matchRate}
+          status={job.status}
+        />
+      ))}
     </div>
   );
 }

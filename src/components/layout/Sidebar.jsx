@@ -8,7 +8,9 @@ import {
   User,
   LogOut,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";//<a href="/dashboard">Dashboard</a> bunu kullanmadık çünkü a etiketi sayfayı tamamen yeniden yükler react sıfırdan başlar
+
+import { NavLink } from "react-router-dom";
+
 const menuItems = [
   {
     title: "Dashboard",
@@ -46,31 +48,55 @@ const menuItems = [
     icon: User,
   },
 ];
+
 function Sidebar() {
   return (
-    <aside className="sidebar">
-      <h2>AI Recruiter</h2>
-    <nav>
-  <ul>
-    {menuItems.map((item) => {
-      const Icon = item.icon;
+<aside className="sidebar flex flex-col">
+        <div className="flex h-16 items-center border-b px-6">
+        <h1 className="text-xl font-bold">
+          AI Recruiter
+        </h1>
+      </div>
 
-      return (
-        <li key={item.path}>
-         <NavLink
-  to={item.path}
-  className={({ isActive }) =>
-    isActive ? "sidebar-link active" : "sidebar-link"
-  }
->
-  <Icon size={20} />
-  <span>{item.title}</span>
-</NavLink>
-        </li>
-      );
-    })}
-  </ul>
-</nav>
+      <nav className="flex-1 p-4">
+        <ul className="space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    isActive
+                      ? "sidebar-link active flex items-center gap-3 rounded-md px-3 py-2"
+                      : "sidebar-link flex items-center gap-3 rounded-md px-3 py-2"
+                  }
+                >
+                  <Icon size={18} />
+
+                  <span>
+                    {item.title}
+                  </span>
+                </NavLink>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <div className="border-t p-4">
+        <button
+          type="button"
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2"
+        >
+          <LogOut size={18} />
+
+          <span>
+            Logout
+          </span>
+        </button>
+      </div>
     </aside>
   );
 }

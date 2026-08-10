@@ -1,21 +1,19 @@
-import "./Layout.css";//css i bağlama
-import { Outlet } from "react-router-dom";
-import Header from "./Header";
 import Sidebar from "./Sidebar";
-//class nameleri eklendi 
+import "./Layout.css";
+import { Outlet } from "react-router-dom";
+
 function Layout() {
   return (
     <div className="layout">
       <Sidebar />
 
-      <div className="main-area">
-        <Header />
-
-        <main className="content">
+      <main className="main-area">
+        <div className="content">
           <Outlet />
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
+
 export default Layout;

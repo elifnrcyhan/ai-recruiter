@@ -2,7 +2,7 @@ import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import CreateJobDialog from "./CreateJobDialog";
 
-function JobToolbar() {
+function JobToolbar({ search, setSearch }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="relative w-80">
@@ -12,12 +12,14 @@ function JobToolbar() {
         />
 
         <Input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
           className="pl-10"
           placeholder="Search jobs..."
         />
       </div>
-        <CreateJobDialog />
-      
+
+      <CreateJobDialog />
     </div>
   );
 }

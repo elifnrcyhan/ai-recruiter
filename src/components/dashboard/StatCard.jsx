@@ -1,23 +1,24 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-function StatCard({ title, value }) {
+function StatCard({ title, value, description }) {
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
+    <Card>
+      <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
       </CardHeader>
 
       <CardContent>
-        <p className="text-3xl font-bold">
-          {value}
-        </p>
+        <div className="text-3xl font-bold">
+          {value ?? "-"}
+        </div>
+
+        {description && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {description}
+          </p>
+        )}
       </CardContent>
     </Card>
   );
