@@ -17,7 +17,68 @@ const createJob = async (req: Request, res: Response) => {
     });
   }
 };
+const getAllJobs = async (_req: Request, res: Response) => {
+  try {
+    const jobs = await jobService.getAllJobs();
 
+    return res.json(jobs);
+  } catch (error) {
+    return res.status(500).json({
+      message: (error as Error).message,
+    });
+  }
+};
+const getJobById = async (req: Request, res: Response) => {
+  try {
+    const job = await jobService.getJobById(req.params.id);
+
+    return res.json(job);
+  } catch (error) {
+    return res.status(404).json({
+      message: (error as Error).message,
+    });
+  }
+};
+const updateJob = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const job = await jobService.updateJob(
+      req.params.id,
+      req.body,
+      userId
+    );
+
+    return res.json(job);
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
+const deleteJob = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const job = await jobService.deleteJob(
+      req.params.id,
+      userId
+    );
+
+    return res.json({
+      message: "Job deleted successfully",
+      job,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
 export default {
   createJob,
+  getAllJobs,
+  getJobById,
+  updateJob,
+  deleteJob,
 };

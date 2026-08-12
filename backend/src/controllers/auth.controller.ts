@@ -43,8 +43,33 @@ const login = async (req: Request, res: Response) => {
     });
   }
 };
+const uploadCv = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
 
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Please upload a PDF file",
+      });
+    }
+
+    const user = await authService.uploadCv(
+      userId,
+      req.file.path
+    );
+
+    return res.json({
+      message: "CV uploaded successfully",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: (error as Error).message,
+    });
+  }
+};
 export default {
   register,
   login,
+  uploadCv,
 };

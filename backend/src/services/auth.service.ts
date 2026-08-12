@@ -76,8 +76,25 @@ return {
   user: userWithoutPassword,
 };
 };
+const uploadCv = async (
+  userId: string,
+  cvUrl: string
+) => {
+  const user = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      cvUrl,
+    },
+  });
 
+  const { password, ...userWithoutPassword } = user;
+
+  return userWithoutPassword;
+};
 export default {
   registerUser,
   loginUser,
+  uploadCv,
 };
