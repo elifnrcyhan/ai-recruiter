@@ -1,4 +1,5 @@
 import prisma from "../config/prisma";
+import { ApplicationStatus } from "@prisma/client";
 
 const applyToJob = async (
   userId: string,
@@ -38,6 +39,7 @@ const applyToJob = async (
 
   return application;
 };
+
 const getMyApplications = async (userId: string) => {
   const applications = await prisma.application.findMany({
     where: {
@@ -57,6 +59,7 @@ const getMyApplications = async (userId: string) => {
 
   return applications;
 };
+
 const getApplicationsByJob = async (
   jobId: string,
   userId: string
@@ -99,9 +102,10 @@ const getApplicationsByJob = async (
 
   return applications;
 };
+
 const updateApplicationStatus = async (
   applicationId: string,
-  status: string,
+  status: ApplicationStatus,
   userId: string
 ) => {
   const application = await prisma.application.findUnique({
@@ -137,6 +141,7 @@ const updateApplicationStatus = async (
 
   return updatedApplication;
 };
+
 export default {
   applyToJob,
   getMyApplications,

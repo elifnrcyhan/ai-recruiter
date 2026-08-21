@@ -8,8 +8,12 @@ import path from "path";
 const analyzeCv = async (req: Request, res: Response) => {
   try {
     const { jobId } = req.params;
-    const user = (req as any).user;
 
+    if (typeof jobId !== "string") {
+      return res.status(400).json({ message: "Invalid jobId" });
+    }
+
+    const user = (req as any).user;
     if (!user?.id) {
       return res.status(401).json({
         message: "Unauthorized",

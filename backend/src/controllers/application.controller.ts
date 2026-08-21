@@ -6,14 +6,18 @@ const applyToJob = async (
   res: Response
 ) => {
   try {
-    const userId = (req as any).user.id;
+    const { jobId } = req.params;
 
+    if (typeof jobId !== "string") {
+      return res.status(400).json({ message: "Invalid jobId" });
+    }
+
+    const userId = (req as any).user.id;
     const application =
       await applicationService.applyToJob(
         userId,
-        req.params.jobId
+        jobId
       );
-
     return res.status(201).json(application);
   } catch (error) {
     return res.status(400).json({
@@ -21,16 +25,15 @@ const applyToJob = async (
     });
   }
 };
+
 const getMyApplications = async (
   req: Request,
   res: Response
 ) => {
   try {
     const userId = (req as any).user.id;
-
     const applications =
       await applicationService.getMyApplications(userId);
-
     return res.json(applications);
   } catch (error) {
     return res.status(500).json({
@@ -38,19 +41,24 @@ const getMyApplications = async (
     });
   }
 };
+
 const getApplicationsByJob = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const userId = (req as any).user.id;
+    const { jobId } = req.params;
 
+    if (typeof jobId !== "string") {
+      return res.status(400).json({ message: "Invalid jobId" });
+    }
+
+    const userId = (req as any).user.id;
     const applications =
       await applicationService.getApplicationsByJob(
-        req.params.jobId,
+        jobId,
         userId
       );
-
     return res.json(applications);
   } catch (error) {
     return res.status(400).json({
@@ -58,20 +66,25 @@ const getApplicationsByJob = async (
     });
   }
 };
+
 const updateApplicationStatus = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const userId = (req as any).user.id;
+    const { applicationId } = req.params;
 
+    if (typeof applicationId !== "string") {
+      return res.status(400).json({ message: "Invalid applicationId" });
+    }
+
+    const userId = (req as any).user.id;
     const application =
       await applicationService.updateApplicationStatus(
-        req.params.applicationId,
+        applicationId,
         req.body.status,
         userId
       );
-
     return res.json(application);
   } catch (error) {
     return res.status(400).json({
@@ -79,6 +92,7 @@ const updateApplicationStatus = async (
     });
   }
 };
+
 export default {
   applyToJob,
   getMyApplications,

@@ -4,12 +4,10 @@ import jobService from "../services/job.service";
 const createJob = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-
     const job = await jobService.createJob(
       req.body,
       userId
     );
-
     return res.status(201).json(job);
   } catch (error) {
     return res.status(400).json({
@@ -17,10 +15,10 @@ const createJob = async (req: Request, res: Response) => {
     });
   }
 };
+
 const getAllJobs = async (_req: Request, res: Response) => {
   try {
     const jobs = await jobService.getAllJobs();
-
     return res.json(jobs);
   } catch (error) {
     return res.status(500).json({
@@ -28,10 +26,16 @@ const getAllJobs = async (_req: Request, res: Response) => {
     });
   }
 };
+
 const getJobById = async (req: Request, res: Response) => {
   try {
-    const job = await jobService.getJobById(req.params.id);
+    const { id } = req.params;
 
+    if (typeof id !== "string") {
+      return res.status(400).json({ message: "Invalid id" });
+    }
+
+    const job = await jobService.getJobById(id);
     return res.json(job);
   } catch (error) {
     return res.status(404).json({
@@ -39,16 +43,21 @@ const getJobById = async (req: Request, res: Response) => {
     });
   }
 };
+
 const updateJob = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const { id } = req.params;
 
+    if (typeof id !== "string") {
+      return res.status(400).json({ message: "Invalid id" });
+    }
+
+    const userId = (req as any).user.id;
     const job = await jobService.updateJob(
-      req.params.id,
+      id,
       req.body,
       userId
     );
-
     return res.json(job);
   } catch (error) {
     return res.status(400).json({
@@ -56,15 +65,20 @@ const updateJob = async (req: Request, res: Response) => {
     });
   }
 };
+
 const deleteJob = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const { id } = req.params;
 
+    if (typeof id !== "string") {
+      return res.status(400).json({ message: "Invalid id" });
+    }
+
+    const userId = (req as any).user.id;
     const job = await jobService.deleteJob(
-      req.params.id,
+      id,
       userId
     );
-
     return res.json({
       message: "Job deleted successfully",
       job,
@@ -75,6 +89,7 @@ const deleteJob = async (req: Request, res: Response) => {
     });
   }
 };
+
 export default {
   createJob,
   getAllJobs,
