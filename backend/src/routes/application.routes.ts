@@ -15,6 +15,17 @@ router.get(
   authMiddleware,
   applicationController.getMyApplications
 );
+router.get(
+  "/company/count",
+  authMiddleware,
+  applicationController.getMyCompanyApplicationsCount
+);
+
+router.get(
+  "/company/ai-match-rate",
+  authMiddleware,
+  applicationController.getMyCompanyAiMatchRate
+);
 
 router.get(
   "/job/:jobId",

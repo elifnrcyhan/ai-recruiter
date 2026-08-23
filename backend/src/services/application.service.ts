@@ -142,9 +142,61 @@ const updateApplicationStatus = async (
   return updatedApplication;
 };
 
+const getMyCompanyApplicationsCount = async (
+  userId: string
+) => {
+  const count = await prisma.application.count({
+    where: {
+      job: {
+        company: {
+          ownerId: userId,
+        },
+      },
+    },
+  });
+
+  return count;
+};
+
+const getMyCompanyAiMatchRate = async (
+  userId: string
+) => {
+  const applications = await prisma.application.findMany({
+    where: {
+      job: {
+        company: {
+          ownerId: userId,
+        },
+      },
+      aiAnalysis: {
+        isNot: null,
+      },
+    },
+    include: {
+      aiAnalysis: true,
+    },
+  });
+
+  if (applications.length === 0) {
+    return 0;
+  }
+
+  const totalScore = applications.reduce(
+    (sum, application) =>
+      sum + (application.aiAnalysis?.score ?? 0),
+    0
+  );
+
+  return Math.round(
+    totalScore / applications.length
+  );
+};
+
 export default {
   applyToJob,
   getMyApplications,
   getApplicationsByJob,
   updateApplicationStatus,
+  getMyCompanyApplicationsCount,
+  getMyCompanyAiMatchRate,
 };
