@@ -1,13 +1,18 @@
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "http://localhost:5000";
 
 async function request(endpoint, options = {}) {
   const response = await fetch(
     `${API_BASE_URL}${endpoint}`,
     {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+headers: {
+  "Content-Type": "application/json",
+  ...(localStorage.getItem("token")
+    ? {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+    : {}),
+  ...options.headers,
+},
       ...options,
     }
   );
