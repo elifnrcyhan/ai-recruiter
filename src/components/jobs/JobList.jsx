@@ -25,10 +25,10 @@ function JobList({ jobs }) {
           id={job.id}
           title={job.title}
           location={job.location}
-          type={job.type}
-          applicants={job.applicants}
-          matchRate={job.matchRate}
-          status={job.status}
+          type={job.employmentType}
+          applicants={job.applicants ?? 0}
+          matchRate={job.matchRate ?? 0}
+          status={job.isActive ? "Active" : "Closed"}
         />
       ))}
     </div>

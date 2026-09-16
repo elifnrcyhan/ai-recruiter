@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { api } from "../../services/api";
 import {
   Dialog,
   DialogContent,
@@ -24,14 +26,33 @@ import {
 
 
 function CreateJobDialog() {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [employmentType, setEmploymentType] = useState("");
+  const [department, setDepartment] = useState("");
+  const [experience, setExperience] = useState("");
+  const handleCreateJob = async () => {
+  try {
+    const newJob = await api.post("/jobs", {
+      title,
+      description,
+      location,
+      employmentType,
+      department,
+      experience,
+    });
+
+    console.log("Job created:", newJob);
+  } catch (error) {
+    console.error("Failed to create job:", error);
+  }
+};
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Job
-        </Button>
-      </DialogTrigger>
+<DialogTrigger>
+  Create Job
+</DialogTrigger>
 
 <DialogContent className="sm:max-w-[600px]">
   <DialogHeader>
@@ -46,17 +67,32 @@ function CreateJobDialog() {
 
     <div className="grid gap-2">
       <Label htmlFor="title">Job Title</Label>
-      <Input id="title" placeholder="Frontend Developer" />
+     <Input
+  id="title"
+  placeholder="Frontend Developer"
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/>
     </div>
 
     <div className="grid gap-2">
       <Label htmlFor="department">Department</Label>
-      <Input id="department" placeholder="Software Development" />
+      <Input
+  id="department"
+  placeholder="Engineering"
+  value={department}
+  onChange={(e) => setDepartment(e.target.value)}
+/>
     </div>
 
     <div className="grid gap-2">
       <Label htmlFor="location">Location</Label>
-      <Input id="location" placeholder="Remote" />
+      <Input
+  id="location"
+  placeholder="Remote"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+/>
     </div>
 
     <div className="grid grid-cols-2 gap-4">
@@ -64,7 +100,10 @@ function CreateJobDialog() {
       <div className="grid gap-2">
         <Label>Employment Type</Label>
 
-        <Select>
+        <Select
+  value={employmentType}
+  onValueChange={setEmploymentType}
+>
           <SelectTrigger>
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
@@ -88,7 +127,11 @@ function CreateJobDialog() {
       <div className="grid gap-2">
         <Label>Experience</Label>
 
-        <Select>
+<Select
+  value={experience}
+  onValueChange={setExperience}
+>
+
           <SelectTrigger>
             <SelectValue placeholder="Select level" />
           </SelectTrigger>
@@ -114,16 +157,20 @@ function CreateJobDialog() {
     <div className="grid gap-2">
       <Label>Description</Label>
 
-      <Textarea
-        placeholder="Write job description..."
-      />
+<Textarea
+  placeholder="Write job description..."
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+/>
     </div>
 
   </div>
 
-  <DialogFooter>
-    <Button>Create Job</Button>
-  </DialogFooter>
+<DialogFooter>
+  <Button onClick={handleCreateJob}>
+    Create Job
+  </Button>
+</DialogFooter>
 </DialogContent>
     </Dialog>
   );

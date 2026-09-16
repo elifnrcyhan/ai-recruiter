@@ -8,6 +8,7 @@ import ApplicantDetail from "./pages/ApplicantDetail";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import JobDetail from "./pages/JobDetail";
 
 import Layout from "./components/layout/Layout";
 
@@ -21,6 +22,7 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jobs" element={<Jobs />} />
+        <Route path="/jobs/:id" element={<JobDetail />} />
         <Route path="/applicants" element={<Applicants />} />
         <Route
           path="/applicant/:id"

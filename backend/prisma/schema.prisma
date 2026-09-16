@@ -53,7 +53,9 @@ model Job {
   description    String
   location       String
   employmentType String
-
+  department     String?
+  experience     String?
+  
   salaryMin      Int?
   salaryMax      Int?
 

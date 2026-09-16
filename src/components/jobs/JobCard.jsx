@@ -57,14 +57,9 @@ function JobCard({
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+<DropdownMenuTrigger>
+  <MoreHorizontal className="h-4 w-4" />
+</DropdownMenuTrigger>
 
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>

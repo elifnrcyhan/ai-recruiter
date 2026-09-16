@@ -1,6 +1,41 @@
 import prisma from "../config/prisma";
 import { ApplicationStatus } from "@prisma/client";
 
+const getMyCompanyRecentApplications = async (
+  userId: string
+) => {
+  const applications = await prisma.application.findMany({
+    where: {
+      job: {
+        company: {
+          ownerId: userId,
+        },
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
+      job: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+  });
+
+  return applications;
+};
+
 const applyToJob = async (
   userId: string,
   jobId: string
@@ -102,6 +137,35 @@ const getApplicationsByJob = async (
 
   return applications;
 };
+const getApplicationsCountByJob = async (
+  jobId: string,
+  userId: string
+) => {
+  const job = await prisma.job.findUnique({
+    where: {
+      id: jobId,
+    },
+    include: {
+      company: true,
+    },
+  });
+
+  if (!job) {
+    throw new Error("Job not found");
+  }
+
+  if (job.company.ownerId !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const count = await prisma.application.count({
+    where: {
+      jobId,
+    },
+  });
+
+  return count;
+};
 
 const updateApplicationStatus = async (
   applicationId: string,
@@ -199,4 +263,6 @@ export default {
   updateApplicationStatus,
   getMyCompanyApplicationsCount,
   getMyCompanyAiMatchRate,
+  getMyCompanyRecentApplications,
+  getApplicationsCountByJob,
 };

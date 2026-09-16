@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { Card, CardContent } from "../components/ui/card";
 import { Link } from "react-router-dom";
+import { api } from "../services/api";
 import ApplicantFilters from "../components/applicants/ApplicantFilters";
 import LoadingState from "../components/common/LoadingState";
 import ErrorState from "../components/common/ErrorState";
@@ -17,6 +18,34 @@ function Applicants() {
 const [applicants, setApplicants] = useState([]);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(null);
+useEffect(() => {
+  const loadApplicants = async () => {
+    try {
+      setLoading(true);
+
+      const data = await api.get("/applications/company/recent");
+
+      const mappedApplicants = data.map((application) => ({
+        id: application.id,
+        name: application.user.fullName,
+        email: application.user.email,
+        position: application.job.title,
+        experience: "-",
+        matchRate: 0,
+        status: application.status,
+      }));
+
+      setApplicants(mappedApplicants);
+    } catch (error) {
+      console.error("Failed to load applicants:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadApplicants();
+}, []);
   
 
 

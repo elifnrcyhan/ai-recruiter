@@ -76,6 +76,34 @@ const getApplicationsByJob = async (
     });
   }
 };
+const getApplicationsCountByJob = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { jobId } = req.params;
+
+    if (typeof jobId !== "string") {
+      return res.status(400).json({
+        message: "Invalid jobId",
+      });
+    }
+
+    const userId = (req as any).user.id;
+
+    const count =
+      await applicationService.getApplicationsCountByJob(
+        jobId,
+        userId
+      );
+
+    return res.json({ count });
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
 
 const updateApplicationStatus = async (
   req: Request,
@@ -147,11 +175,33 @@ const getMyCompanyAiMatchRate = async (
   }
 };
 
+const getMyCompanyRecentApplications = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const applications =
+      await applicationService.getMyCompanyRecentApplications(
+        userId
+      );
+
+    return res.json(applications);
+  } catch (error) {
+    return res.status(500).json({
+      message: (error as Error).message,
+    });
+  }
+};
+
 export default {
   applyToJob,
   getMyApplications,
   getApplicationsByJob,
+  getApplicationsCountByJob,
   updateApplicationStatus,
   getMyCompanyApplicationsCount,
   getMyCompanyAiMatchRate,
+  getMyCompanyRecentApplications,
 };

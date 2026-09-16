@@ -5,6 +5,8 @@ type CreateJobData = {
   description: string;
   location: string;
   employmentType: string;
+  department: string;
+  experience?: string;
   salaryMin?: number;
   salaryMax?: number;
 };
@@ -29,6 +31,8 @@ const createJob = async (
       description: data.description,
       location: data.location,
       employmentType: data.employmentType,
+      department: data.department,
+      experience: data.experience,
       salaryMin: data.salaryMin,
       salaryMax: data.salaryMax,
       companyId: company.id,

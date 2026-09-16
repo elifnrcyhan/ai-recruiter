@@ -32,6 +32,18 @@ router.get(
   authMiddleware,
   applicationController.getApplicationsByJob
 );
+
+router.get(
+  "/job/:jobId/count",
+  authMiddleware,
+  applicationController.getApplicationsCountByJob
+);
+
+router.get(
+  "/company/recent",
+  authMiddleware,
+  applicationController.getMyCompanyRecentApplications
+);
 router.patch(
   "/:applicationId/status",
   authMiddleware,

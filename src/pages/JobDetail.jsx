@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+
+import { api } from "../services/api";
 
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
@@ -7,7 +10,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 
 function JobDetail() {
   const { id } = useParams();
+  const [job, setJob] = useState(null);
+  const [applicantCount, setApplicantCount] = useState(0);
+  
+useEffect(() => {
+  const loadJob = async () => {
+    try {
+      const data = await api.get(`/jobs/${id}`);
+      setJob(data);
 
+      const applicationData = await api.get(
+        `/applications/job/${id}/count`
+      );
+
+      setApplicantCount(applicationData.count);
+    } catch (error) {
+      console.error("Failed to load job:", error);
+    }
+  };
+
+  loadJob();
+}, [id]);
+
+  if (!job) {
+    return (
+      <div className="p-6">
+        Loading...
+      </div>
+    );
+  }
   return (
     <div className="space-y-6 p-6">
       <div>
@@ -23,14 +54,16 @@ function JobDetail() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold">
-              Frontend Developer
+                {job.title}
             </h1>
 
-            <Badge>Active</Badge>
+            <Badge>
+              {job.isActive ? "Active" : "Closed"}
+            </Badge>
           </div>
 
           <p className="mt-2 text-muted-foreground">
-            Remote • Full Time
+            {job.location} • {job.employmentType}
           </p>
         </div>
       </div>
@@ -43,7 +76,7 @@ function JobDetail() {
 
           <CardContent>
             <p className="text-3xl font-bold">
-              12
+              {applicantCount}
             </p>
           </CardContent>
         </Card>
@@ -67,7 +100,7 @@ function JobDetail() {
 
           <CardContent>
             <p className="text-lg">
-              Mid Level
+              {job.experience || "Not specified"}
             </p>
           </CardContent>
         </Card>
@@ -80,11 +113,7 @@ function JobDetail() {
 
         <CardContent>
           <p className="text-muted-foreground">
-            We are looking for a Frontend Developer to
-            join our software development team. The
-            candidate will work with React and modern
-            frontend technologies to build scalable
-            applications.
+                {job.description}
           </p>
         </CardContent>
       </Card>
@@ -100,7 +129,7 @@ function JobDetail() {
       className="block"
     >
       <p className="text-3xl font-bold">
-        12
+        {applicantCount}
       </p>
 
       <p className="mt-1 text-sm text-muted-foreground">
