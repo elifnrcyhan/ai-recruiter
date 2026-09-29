@@ -1,5 +1,9 @@
+console.log("🔥 APPLICATION.ROUTES DOSYASI OKUNDU");    
+
 import { Router } from "express";
+
 import applicationController from "../controllers/application.controller";
+
 import authMiddleware from "../middlewares/auth.middleware";
 
 const router = Router();
@@ -15,6 +19,7 @@ router.get(
   authMiddleware,
   applicationController.getMyApplications
 );
+
 router.get(
   "/company/count",
   authMiddleware,
@@ -44,10 +49,17 @@ router.get(
   authMiddleware,
   applicationController.getMyCompanyRecentApplications
 );
+
+router.get(
+  "/:applicationId",
+  authMiddleware,
+  applicationController.getApplicationById
+);
+
 router.patch(
   "/:applicationId/status",
   authMiddleware,
   applicationController.updateApplicationStatus
 );
-
+console.log("APPLICATION ROUTES LOADED");
 export default router;

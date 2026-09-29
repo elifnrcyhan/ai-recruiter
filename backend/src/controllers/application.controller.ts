@@ -9,19 +9,15 @@ const applyToJob = async (
     const { jobId } = req.params;
 
     if (typeof jobId !== "string") {
-      return res.status(400).json({
-        message: "Invalid jobId",
-      });
+      return res.status(400).json({ message: "Invalid jobId" });
     }
 
     const userId = (req as any).user.id;
-
     const application =
       await applicationService.applyToJob(
         userId,
         jobId
       );
-
     return res.status(201).json(application);
   } catch (error) {
     return res.status(400).json({
@@ -36,100 +32,11 @@ const getMyApplications = async (
 ) => {
   try {
     const userId = (req as any).user.id;
-
     const applications =
       await applicationService.getMyApplications(userId);
-
     return res.json(applications);
   } catch (error) {
     return res.status(500).json({
-      message: (error as Error).message,
-    });
-  }
-};
-
-const getApplicationsByJob = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { jobId } = req.params;
-
-    if (typeof jobId !== "string") {
-      return res.status(400).json({
-        message: "Invalid jobId",
-      });
-    }
-
-    const userId = (req as any).user.id;
-
-    const applications =
-      await applicationService.getApplicationsByJob(
-        jobId,
-        userId
-      );
-
-    return res.json(applications);
-  } catch (error) {
-    return res.status(400).json({
-      message: (error as Error).message,
-    });
-  }
-};
-const getApplicationsCountByJob = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { jobId } = req.params;
-
-    if (typeof jobId !== "string") {
-      return res.status(400).json({
-        message: "Invalid jobId",
-      });
-    }
-
-    const userId = (req as any).user.id;
-
-    const count =
-      await applicationService.getApplicationsCountByJob(
-        jobId,
-        userId
-      );
-
-    return res.json({ count });
-  } catch (error) {
-    return res.status(400).json({
-      message: (error as Error).message,
-    });
-  }
-};
-
-const updateApplicationStatus = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { applicationId } = req.params;
-
-    if (typeof applicationId !== "string") {
-      return res.status(400).json({
-        message: "Invalid applicationId",
-      });
-    }
-
-    const userId = (req as any).user.id;
-
-    const application =
-      await applicationService.updateApplicationStatus(
-        applicationId,
-        req.body.status,
-        userId
-      );
-
-    return res.json(application);
-  } catch (error) {
-    return res.status(400).json({
       message: (error as Error).message,
     });
   }
@@ -147,7 +54,7 @@ const getMyCompanyApplicationsCount = async (
         userId
       );
 
-    return res.json({ count });
+    return res.json(count);
   } catch (error) {
     return res.status(500).json({
       message: (error as Error).message,
@@ -162,12 +69,12 @@ const getMyCompanyAiMatchRate = async (
   try {
     const userId = (req as any).user.id;
 
-    const rate =
+    const matchRate =
       await applicationService.getMyCompanyAiMatchRate(
         userId
       );
 
-    return res.json({ rate });
+    return res.json(matchRate);
   } catch (error) {
     return res.status(500).json({
       message: (error as Error).message,
@@ -195,13 +102,123 @@ const getMyCompanyRecentApplications = async (
   }
 };
 
+const getApplicationById = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { applicationId } = req.params;
+
+    if (typeof applicationId !== "string") {
+      return res.status(400).json({
+        message: "Invalid applicationId",
+      });
+    }
+
+    const userId = (req as any).user.id;
+
+    const application =
+      await applicationService.getApplicationById(
+        applicationId,
+        userId
+      );
+
+    return res.json(application);
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
+
+const getApplicationsByJob = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { jobId } = req.params;
+
+    if (typeof jobId !== "string") {
+      return res.status(400).json({ message: "Invalid jobId" });
+    }
+
+    const userId = (req as any).user.id;
+    const applications =
+      await applicationService.getApplicationsByJob(
+        jobId,
+        userId
+      );
+    return res.json(applications);
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
+
+const getApplicationsCountByJob = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { jobId } = req.params;
+
+    if (typeof jobId !== "string") {
+      return res.status(400).json({
+        message: "Invalid jobId",
+      });
+    }
+
+    const userId = (req as any).user.id;
+
+    const count =
+      await applicationService.getApplicationsCountByJob(
+        jobId,
+        userId
+      );
+
+    return res.json(count);
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
+
+const updateApplicationStatus = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { applicationId } = req.params;
+
+    if (typeof applicationId !== "string") {
+      return res.status(400).json({ message: "Invalid applicationId" });
+    }
+
+    const userId = (req as any).user.id;
+    const application =
+      await applicationService.updateApplicationStatus(
+        applicationId,
+        req.body.status,
+        userId
+      );
+    return res.json(application);
+  } catch (error) {
+    return res.status(400).json({
+      message: (error as Error).message,
+    });
+  }
+};
+
 export default {
   applyToJob,
   getMyApplications,
-  getApplicationsByJob,
-  getApplicationsCountByJob,
-  updateApplicationStatus,
   getMyCompanyApplicationsCount,
   getMyCompanyAiMatchRate,
   getMyCompanyRecentApplications,
+  getApplicationById,
+  getApplicationsByJob,
+  getApplicationsCountByJob,
+  updateApplicationStatus,
 };

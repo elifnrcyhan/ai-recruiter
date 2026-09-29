@@ -1,3 +1,4 @@
+console.log("APP.TS LOADED");
 import companyRoutes from "./routes/company.routes";
 import jobRoutes from "./routes/job.routes";
 import authRoutes from "./routes/auth.routes";
@@ -8,6 +9,13 @@ import morgan from "morgan";
 import prisma from "./config/prisma";
 import userRoutes from "./routes/user.routes";
 import applicationRoutes from "./routes/application.routes";
+console.log(
+  "APPLICATION ROUTES:",
+  applicationRoutes.stack?.map((layer: any) => ({
+    path: layer.route?.path,
+    methods: layer.route?.methods,
+  }))
+);
 import aiRoutes from "./routes/ai.routes";
 const app = express();
 

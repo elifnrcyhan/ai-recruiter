@@ -24,6 +24,7 @@ useEffect(() => {
       setLoading(true);
 
       const data = await api.get("/applications/company/recent");
+console.log("Applicants API:", data);
 
       const mappedApplicants = data.map((application) => ({
         id: application.id,
@@ -31,7 +32,7 @@ useEffect(() => {
         email: application.user.email,
         position: application.job.title,
         experience: "-",
-        matchRate: 0,
+        matchRate: application.aiAnalysis?.score ?? 0,
         status: application.status,
       }));
 

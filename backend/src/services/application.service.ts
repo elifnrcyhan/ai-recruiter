@@ -12,21 +12,22 @@ const getMyCompanyRecentApplications = async (
         },
       },
     },
-    include: {
-      user: {
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-        },
-      },
-      job: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
+include: {
+  user: {
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
     },
+  },
+  job: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
+  aiAnalysis: true,
+},
     orderBy: {
       createdAt: "desc",
     },
@@ -95,6 +96,56 @@ const getMyApplications = async (userId: string) => {
   return applications;
 };
 
+const getApplicationById = async (
+  applicationId: string,
+  userId: string
+) => {
+  const application =
+    await prisma.application.findUnique({
+      where: {
+        id: applicationId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+          },
+        },
+        job: {
+          select: {
+            id: true,
+            title: true,
+            location: true,
+          },
+        },
+        aiAnalysis: true,
+      },
+    });
+
+  if (!application) {
+    throw new Error("Application not found");
+  }
+
+  if (application.job) {
+    const job = await prisma.job.findUnique({
+      where: {
+        id: application.job.id,
+      },
+      include: {
+        company: true,
+      },
+    });
+
+    if (!job || job.company.ownerId !== userId) {
+      throw new Error("Unauthorized");
+    }
+  }
+
+  return application;
+};
+
 const getApplicationsByJob = async (
   jobId: string,
   userId: string
@@ -121,15 +172,16 @@ const getApplicationsByJob = async (
       where: {
         jobId,
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullName: true,
-            email: true,
-          },
-        },
-      },
+include: {
+  user: {
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+    },
+  },
+  aiAnalysis: true,
+},
       orderBy: {
         createdAt: "desc",
       },
@@ -259,6 +311,7 @@ const getMyCompanyAiMatchRate = async (
 export default {
   applyToJob,
   getMyApplications,
+  getApplicationById,
   getApplicationsByJob,
   updateApplicationStatus,
   getMyCompanyApplicationsCount,

@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Mail, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { api } from "../services/api";
 import {
   Card,
   CardContent,
@@ -20,10 +21,50 @@ import {
 import { Textarea } from "../components/ui/textarea";
 
 function ApplicantDetail() {
-  const { id } = useParams();
-  const [status, setStatus] = useState("Shortlisted");
+const { id } = useParams();
+const [applicant, setApplicant] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  const loadApplicant = async () => {
+    try {
+const data = await api.get(`/applications/${id}`);
+setApplicant(data);
+setStatus(data.status);
+    } catch (error) {
+      console.error("Failed to load applicant:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadApplicant();
+}, [id]);
+  const [status, setStatus] = useState("");
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+
+  const updateApplicationStatus = async (newStatus) => {
+  try {
+    const updatedApplication = await api.patch(
+      `/applications/${id}/status`,
+      {
+        status: newStatus,
+      }
+    );
+
+    setStatus(updatedApplication.status);
+    setApplicant((current) => ({
+      ...current,
+      status: updatedApplication.status,
+    }));
+  } catch (error) {
+    console.error("Failed to update application status:", error);
+  }
+};
+
   return (
     <div className="space-y-6 p-6">
       <Button variant="ghost" asChild>
@@ -36,13 +77,13 @@ function ApplicantDetail() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold">
-            John Doe
+           {applicant?.user?.fullName || "Loading..."}
           </h1>
 
           <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <Mail className="h-4 w-4" />
-              john@example.com
+              {applicant?.user?.email || "Loading..."}
             </span>
 
             <span className="flex items-center gap-1">
@@ -57,9 +98,9 @@ function ApplicantDetail() {
     {status}
   </Badge>
 
-  <Button onClick={() => setStatus("Accepted")}>
-    Accept
-  </Button>
+<Button onClick={() => updateApplicationStatus("ACCEPTED")}>
+  Accept
+</Button>
 
   <Button
   variant="destructive"
@@ -84,7 +125,7 @@ function ApplicantDetail() {
 
           <CardContent>
             <p className="text-4xl font-bold">
-              92%
+              {applicant?.aiAnalysis?.score ?? 0}%
             </p>
 
             <p className="mt-1 text-sm text-muted-foreground">
@@ -116,7 +157,7 @@ function ApplicantDetail() {
 
           <CardContent>
             <p className="text-lg font-semibold">
-              Frontend Developer
+              {applicant?.job?.title || "Loading..."}
             </p>
           </CardContent>
         </Card>
@@ -134,7 +175,7 @@ function ApplicantDetail() {
 
       <div className="mt-2 flex items-center gap-4">
         <span className="text-4xl font-bold">
-          92%
+          {applicant?.aiAnalysis?.score ?? 0}%
         </span>
 
         <Badge>
@@ -149,51 +190,47 @@ function ApplicantDetail() {
       </h3>
 
       <p className="mt-2 text-sm text-muted-foreground">
-        The candidate has strong frontend development
-        experience and matches most of the technical
-        requirements for this position.
+        {applicant?.aiAnalysis?.summary ?? "No AI analysis available."}
       </p>
     </div>
 
-    <div>
-      <h3 className="font-semibold">
-        Strengths
-      </h3>
+<div>
+  <h3 className="font-semibold">
+    Strengths
+  </h3>
 
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-        <li>Strong React experience</li>
-        <li>Good JavaScript knowledge</li>
-        <li>Professional frontend experience</li>
-        <li>Experience with Git</li>
-      </ul>
-    </div>
+  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+    {applicant?.aiAnalysis?.strengths?.map((strength) => (
+      <li key={strength}>{strength}</li>
+    ))}
+  </ul>
+</div>
 
-    <div>
-      <h3 className="font-semibold">
-        Weaknesses
-      </h3>
+<div>
+  <h3 className="font-semibold">
+    Weaknesses
+  </h3>
 
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-        <li>Limited backend experience</li>
-        <li>No experience with Docker</li>
-      </ul>
-    </div>
+  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+    {applicant?.aiAnalysis?.weaknesses?.map((weakness) => (
+      <li key={weakness}>{weakness}</li>
+    ))}
+  </ul>
+</div>
 
-    <div>
-      <h3 className="font-semibold">
-        Missing Skills
-      </h3>
+<div>
+  <h3 className="font-semibold">
+    Missing Skills
+  </h3>
 
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Badge variant="secondary">
-          Node.js
-        </Badge>
-
-        <Badge variant="secondary">
-          Docker
-        </Badge>
-      </div>
-    </div>
+  <div className="mt-2 flex flex-wrap gap-2">
+    {applicant?.aiAnalysis?.missingSkills?.map((skill) => (
+      <Badge key={skill} variant="secondary">
+        {skill}
+      </Badge>
+    ))}
+  </div>
+</div>
   </CardContent>
 </Card>
 {status === "Rejected" && rejectReason && (
@@ -286,15 +323,15 @@ function ApplicantDetail() {
         Cancel
       </Button>
 
-      <Button
-        variant="destructive"
-        onClick={() => {
-          setStatus("Rejected");
-          setRejectDialogOpen(false);
-        }}
-      >
-        Reject Applicant
-      </Button>
+<Button
+  variant="destructive"
+  onClick={async () => {
+    await updateApplicationStatus("REJECTED");
+    setRejectDialogOpen(false);
+  }}
+>
+  Reject Applicant
+</Button>
     </div>
   </DialogContent>
 </Dialog>
